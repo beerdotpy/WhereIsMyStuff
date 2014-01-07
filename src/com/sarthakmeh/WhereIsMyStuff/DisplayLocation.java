@@ -9,7 +9,7 @@ public class DisplayLocation extends MapActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.mapactivity_findstuff);        
+        setContentView(R.layout.mapview);        
     }
 
 	@Override
