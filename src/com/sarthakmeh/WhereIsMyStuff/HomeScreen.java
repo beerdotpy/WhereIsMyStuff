@@ -36,7 +36,7 @@ public class HomeScreen extends Activity {
         	Log.d("Timer","3mins finish");
         	
         		
-        		Intent intent_homescreen=new Intent(HomeScreen.this,PairedDevices.class);
+        		Intent intent_homescreen=new Intent(HomeScreen.this,DisplayLocation.class);
         		
         	    Intent serviceIntent = new Intent(HomeScreen.this, StartupService.class);
         		HomeScreen.this.startService(serviceIntent);
