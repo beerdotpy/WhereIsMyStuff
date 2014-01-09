@@ -9,6 +9,8 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.widget.Toast;
@@ -27,22 +29,25 @@ public class DisplayLocation extends FragmentActivity {
         setContentView(R.layout.mapvie);   
         try {
             // Loading map
-            initilizeMap();
+      //      initilizeMap();
  
         } catch (Exception e) {
             e.printStackTrace();
         }
         
-        
-        Marker hamburg = googleMap.addMarker(new MarkerOptions().position(HAMBURG)
-                .title("Hamburg"));
-            Marker kiel = googleMap.addMarker(new MarkerOptions()
-                .position(KIEL)
-                .title("Kiel")
-                .snippet("Kiel is cool")
-                .icon(BitmapDescriptorFactory
-                    .fromResource(R.drawable.ic_launcher)));
- 
+        Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
+        	    Uri.parse("http://maps.google.com/maps?saddr=53.558, 9.927&daddr=53.551, 9.993"));
+        	startActivity(intent);
+               
+//        Marker hamburg = googleMap.addMarker(new MarkerOptions().position(HAMBURG)
+//                .title("Hamburg"));
+//            Marker kiel = googleMap.addMarker(new MarkerOptions()
+//                .position(KIEL)
+//                .title("Kiel")
+//                .snippet("Kiel is cool")
+//                .icon(BitmapDescriptorFactory
+//                    .fromResource(R.drawable.ic_launcher)));
+// 
     }
  
     /**
