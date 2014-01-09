@@ -1,49 +1,71 @@
 package com.sarthakmeh.WhereIsMyStuff;
 
-import com.google.android.gms.maps.CameraUpdateFactory;
+
 import com.google.android.gms.maps.GoogleMap;
-import com.google.android.gms.maps.MapFragment;
+
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
+import android.widget.Toast;
 
 
-@SuppressLint("NewApi")
+
 public class DisplayLocation extends FragmentActivity {
 	
+	GoogleMap googleMap;
 	static final LatLng HAMBURG = new LatLng(53.558, 9.927);
-    static final LatLng KIEL = new LatLng(53.551, 9.993);
-    GoogleMap map;
+	static final LatLng KIEL = new LatLng(53.551, 9.993);
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.mapvie);   
-              
-        map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map))
-              .getMap();
-          Marker hamburg = map.addMarker(new MarkerOptions().position(HAMBURG)
-              .title("Hamburg"));
-          Marker kiel = map.addMarker(new MarkerOptions()
-              .position(KIEL)
-              .title("Kiel")
-              .snippet("Kiel is cool")
-              .icon(BitmapDescriptorFactory
-                  .fromResource(R.drawable.ic_launcher)));
-
-          // Move the camera instantly to hamburg with a zoom of 15.
-          map.moveCamera(CameraUpdateFactory.newLatLngZoom(HAMBURG, 15));
-
-          // Zoom in, animating the camera.
-          map.animateCamera(CameraUpdateFactory.zoomTo(10), 2000, null);
+        try {
+            // Loading map
+            initilizeMap();
+ 
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        
+        
+        Marker hamburg = googleMap.addMarker(new MarkerOptions().position(HAMBURG)
+                .title("Hamburg"));
+            Marker kiel = googleMap.addMarker(new MarkerOptions()
+                .position(KIEL)
+                .title("Kiel")
+                .snippet("Kiel is cool")
+                .icon(BitmapDescriptorFactory
+                    .fromResource(R.drawable.ic_launcher)));
+ 
+    }
+ 
+    /**
+     * function to load map. If map is not created it will create it for you
+     * */
+    private void initilizeMap() {
+        if (googleMap == null) {
+            googleMap = ((SupportMapFragment) getSupportFragmentManager().findFragmentById(
+                    R.id.map)).getMap();
+ 
+            // check if map is created successfully or not
+            if (googleMap == null) {
+                Toast.makeText(getApplicationContext(),
+                        "Sorry! unable to create maps", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        }
+    }
+ 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        initilizeMap();
+    }          
+	}
 
-     
-
-}
