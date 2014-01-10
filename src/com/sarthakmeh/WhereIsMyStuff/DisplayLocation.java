@@ -30,6 +30,9 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,7 +49,8 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	String currentUserLatitude;
 	String currentUserLongitude;
 	String TAG="WhereIsMyStuff";
-	TextView userLastLocation,usercurrentLocation;
+	TextView userLastLocation,userCurrentLocation;
+	Button navigate;
 	ProgressBar mActivityIndicator;
 	SharedPreferences prefs;
 	Editor editPrefs;
@@ -72,9 +76,10 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_showlocation);   
        
-        usercurrentLocation=(TextView) findViewById(R.id.currentLocation);
+        userCurrentLocation=(TextView) findViewById(R.id.currentLocation);
         userLastLocation=(TextView) findViewById(R.id.lastLocation);
         mActivityIndicator=(ProgressBar) findViewById(R.id.address_progress);
+        navigate=(Button) findViewById(R.id.navigate);
         
         prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
           
@@ -92,7 +97,24 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
                // Set the fastest update interval to 1 second
                mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
                
+               if(lastUserLatitude==null && lastUserLongitude==null){
+					
+					Toast.makeText(getApplicationContext(), "Navigation not available", Toast.LENGTH_LONG).show();
+					navigate.setVisibility(View.GONE);
+				}
                
+               navigate.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+				
+					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
+			        	    Uri.parse("http://maps.google.com/maps?saddr="+currentUserLatitude+
+			        	    		","+currentUserLongitude+"daddr="+lastUserLatitude+","+lastUserLongitude));
+			        	startActivity(intent);
+					
+				}
+			});
 
 //        try {
 //            // Loading map
@@ -165,6 +187,7 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	@Override
 	public void onConnected(Bundle bundle) {
 		// TODO Auto-generated method stub
+		Log.d(TAG,"onConnected");
 		mCurrentLocation = mLocationClient.getLastLocation();	
 		
    currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
@@ -209,21 +232,29 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	}
 	
 	
-	 class GetAddressTask extends AsyncTask<String, Void, Void> {
+	 class GetAddressTask extends AsyncTask<String, Void, Boolean> {
          
    	  Context mContext;
    	  List<Address> currentAddress=null;
    	  List<Address> lastAddress=null;
+   	  String currentAddressText;
+   	  String lastAddressText;
     
    	  public GetAddressTask(Context context) {
              super();
              mContext = context;
       }
    	  
+   	@Override
+	protected void onPreExecute(){
+   		
+   		mActivityIndicator.setVisibility(View.VISIBLE);
+   	}  
+   	  
 	@Override
-	protected Void doInBackground(String... str){
+	protected Boolean doInBackground(String... str){
 		
-		Geocoder geocoder =
+	  Geocoder geocoder =
                 new Geocoder(mContext, Locale.getDefault());
 		
 		try {
@@ -239,31 +270,50 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 			e.printStackTrace();
 		}
 		
-		if (currentAddress != null && currentAddress.size() > 0) {
+		if (currentAddress != null && lastAddress!=null && lastAddress.size()>0 && currentAddress.size() > 0) {
             // Get the first address
-            Address address = currentAddress.get(0);
+            Address currentAdd = currentAddress.get(0);
+            Address lastAdd = lastAddress.get(0);
             /*
              * Format the first line of address (if available),
              * city, and country name.
              */
-            String addressText = String.format(
+            currentAddressText = "Current Location :"+String.format(
                     "%s, %s, %s",
                     // If there's a street address, add it
-                    address.getMaxAddressLineIndex() > 0 ?
-                            address.getAddressLine(0) : "",
+                    currentAdd.getMaxAddressLineIndex() > 0 ?
+                            currentAdd.getAddressLine(0) : "",
                     // Locality is usually a city
-                    address.getLocality(),
+                    currentAdd.getLocality(),
                     // The country of the address
-                    address.getCountryName());
+                    currentAdd.getCountryName());
             
-            Log.d(TAG,addressText);
+            lastAddressText = "Last Location :"+String.format(
+                    "%s, %s, %s",
+                    // If there's a street address, add it
+                    lastAdd.getMaxAddressLineIndex() > 0 ?
+                            currentAdd.getAddressLine(0) : "",
+                    // Locality is usually a city
+                    lastAdd.getLocality(),
+                    // The country of the address
+                    lastAdd.getCountryName());
+            
+            Log.d(TAG,currentAddressText+" "+lastAddressText);
 		
             
 		
 	}
-		return null;
+		return true;
     }
 	
+	@Override
+	protected void onPostExecute(Boolean b) {
+        // Set activity indicator visibility to "gone"
+        mActivityIndicator.setVisibility(View.GONE);
+        userCurrentLocation.setText(currentAddressText);
+        userLastLocation.setText(lastAddressText);   
+        
+    }
 	 
 	 }
 	
