@@ -1,0 +1,44 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/currentLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="23dp"
+        android:layout_marginTop="35dp"
+        android:text="User Current Location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+    
+    <ProgressBar
+         android:id="@+id/address_progress"
+         android:layout_width="wrap_content"
+         android:layout_height="wrap_content"
+         android:layout_centerHorizontal="true"
+         android:indeterminate="true"
+         android:visibility="gone" />
+
+    <TextView
+        android:id="@+id/lastLocation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/currentLocation"
+        android:layout_below="@+id/currentLocation"
+        android:layout_marginTop="89dp"
+        android:text="User Last Location"
+        android:textAppearance="?android:attr/textAppearanceLarge" />
+
+    <Button
+        android:id="@+id/navigate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/lastLocation"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="70dp"
+        android:text="Show Navigation" />
+
+</RelativeLayout> 
