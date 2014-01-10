@@ -99,8 +99,10 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
                
                if(lastUserLatitude==null && lastUserLongitude==null){
 					
-					Toast.makeText(getApplicationContext(), "Navigation not available", Toast.LENGTH_LONG).show();
-					navigate.setVisibility(View.GONE);
+					
+					navigate.setEnabled(false);
+				}else{
+					navigate.setEnabled(true);
 				}
                
                navigate.setOnClickListener(new OnClickListener() {
@@ -108,9 +110,11 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 				@Override
 				public void onClick(View v) {
 				
+					 
+					
 					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
 			        	    Uri.parse("http://maps.google.com/maps?saddr="+currentUserLatitude+
-			        	    		","+currentUserLongitude+"daddr="+lastUserLatitude+","+lastUserLongitude));
+			        	    		", "+currentUserLongitude+"&daddr="+lastUserLatitude+", "+lastUserLongitude));
 			        	startActivity(intent);
 					
 				}
@@ -217,6 +221,7 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	@Override
 	public void onLocationChanged(Location location) {
 		
+		Toast.makeText(getApplicationContext(), "Location Changed", Toast.LENGTH_LONG).show();
 		SharedPreferences backgroundPrefs;
 		backgroundPrefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
 		Editor edit;
