@@ -80,44 +80,50 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_showlocation); 
         
-        if(checkNetworkConn()){
-        	Log.d("Connection","Connected");
-        }else{
-        	startActivity(new Intent(DisplayLocation.this,HomeScreen.class));
-        }
         
-       
         userCurrentLocation=(TextView) findViewById(R.id.currentLocation);
         userLastLocation=(TextView) findViewById(R.id.lastLocation);
         mActivityIndicator=(ProgressBar) findViewById(R.id.address_progress);
         navigate=(Button) findViewById(R.id.navigate);
         
-        prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
-          
-        	 lastUserLatitude=prefs.getString("Latitude",null);
-        	 lastUserLongitude=prefs.getString("Longitude",null);
-          
+        if(checkNetworkConn()){
+        	Log.d("Connection","Connected");
+        	
+        }else{
+        	Toast.makeText(getApplicationContext(), "Please connect to internet and try again", Toast.LENGTH_LONG).show();
+        	startActivity(new Intent(DisplayLocation.this,HomeScreen.class));
+        	finish();
+        }
         
-               mLocationClient=new LocationClient(this, this, this);
-               mLocationRequest=LocationRequest.create();
-               
-               mLocationRequest.setPriority(
-                       LocationRequest.PRIORITY_HIGH_ACCURACY);
-               // Set the update interval to 5 seconds
-               mLocationRequest.setInterval(UPDATE_INTERVAL);
-               // Set the fastest update interval to 1 second
-               mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
-               
-               if(lastUserLatitude==null && lastUserLongitude==null){
-					
-					
-					navigate.setEnabled(false);
-					Toast.makeText(getApplicationContext(), "Navigation not available as last location and " +
-							"current location same.Please try after some time",Toast.LENGTH_LONG).show();
-				}else{
-					navigate.setEnabled(true);
-				}
-               
+        mLocationClient=new LocationClient(this, this, this);
+        mLocationRequest=LocationRequest.create();
+        
+        mLocationRequest.setPriority(
+                LocationRequest.PRIORITY_HIGH_ACCURACY);
+        // Set the update interval to 5 seconds
+        mLocationRequest.setInterval(UPDATE_INTERVAL);
+        // Set the fastest update interval to 1 second
+        mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+        
+        prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
+        
+   	 lastUserLatitude=prefs.getString("Latitude",null);
+   	 lastUserLongitude=prefs.getString("Longitude",null);
+     
+   
+          
+          if(lastUserLatitude==null && lastUserLongitude==null){
+				
+				
+				navigate.setEnabled(false);
+				Toast.makeText(getApplicationContext(), "Navigation not available as last location and " +
+						"current location same.Please try after some time",Toast.LENGTH_LONG).show();
+			}else{
+				navigate.setEnabled(true);
+			}
+      
+    	
+        
                navigate.setOnClickListener(new OnClickListener() {
 				
 				@Override
