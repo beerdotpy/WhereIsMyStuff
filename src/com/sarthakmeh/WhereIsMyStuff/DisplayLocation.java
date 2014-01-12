@@ -2,6 +2,8 @@ package com.sarthakmeh.WhereIsMyStuff;
 
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.List;
 import java.util.Locale;
 
@@ -25,6 +27,8 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -74,7 +78,14 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_showlocation);   
+        setContentView(R.layout.activity_showlocation); 
+        
+        if(checkNetworkConn()){
+        	Log.d("Connection","Connected");
+        }else{
+        	startActivity(new Intent(DisplayLocation.this,HomeScreen.class));
+        }
+        
        
         userCurrentLocation=(TextView) findViewById(R.id.currentLocation);
         userLastLocation=(TextView) findViewById(R.id.lastLocation);
@@ -144,6 +155,34 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 //                    .fromResource(R.drawable.ic_launcher)));
 // 
     }
+	
+	boolean checkNetworkConn(){
+		
+		boolean value=false;
+		if (isNetworkAvailable()) {
+            try {
+                HttpURLConnection urlc = (HttpURLConnection) (new URL("http://www.google.com").openConnection());
+                urlc.setRequestProperty("User-Agent", "Test");
+                urlc.setRequestProperty("Connection", "close");
+                urlc.setConnectTimeout(1500); 
+                urlc.connect();
+                value=urlc.getResponseCode() == 200;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        } else {
+        	value=false;
+        }
+		
+		return value;
+	}
+	
+	private boolean isNetworkAvailable() {
+	    ConnectivityManager connectivityManager 
+	         = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+	    NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+	    return activeNetworkInfo != null;
+	}
  
     /**
      * function to load map. If map is not created it will create it for you

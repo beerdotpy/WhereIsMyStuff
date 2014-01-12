@@ -67,6 +67,7 @@ public class PairedDevices extends Activity {
 			Intent intentBluetooth = new Intent();
 		    intentBluetooth.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
 		    startActivity(intentBluetooth);
+		    finish();
 
 			
 		}
