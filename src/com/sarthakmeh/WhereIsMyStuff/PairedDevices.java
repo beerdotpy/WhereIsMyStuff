@@ -50,18 +50,9 @@ public class PairedDevices extends Activity {
 	   
 	   mBtAdapter=BluetoothAdapter.getDefaultAdapter();
 		
-       CheckBluetoothState();
-       
-       
-       Intent serviceIntent = new Intent(PairedDevices.this, StartupService.class);
-	   PairedDevices.this.startService(serviceIntent);
-       
-	   mBtAdapter.startDiscovery();
-	   Toast.makeText(getApplicationContext(), "Searching for devices", Toast.LENGTH_LONG).show();
-	   
-	   IntentFilter newDeviceFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
-       this.registerReceiver(mReceiver, newDeviceFound);
-       
+	   CheckBluetoothState();
+              
+                    
 	}
 	
 	private OnItemClickListener openBluetoothSettings = new OnItemClickListener() {
@@ -73,13 +64,9 @@ public class PairedDevices extends Activity {
 			// TODO Auto-generated method stub
 			
 			mBtAdapter.cancelDiscovery();
-		
-			final Intent intent = new Intent(Intent.ACTION_MAIN, null);
-            intent.addCategory(Intent.CATEGORY_LAUNCHER);
-            final ComponentName cn = new ComponentName("com.android.settings", "com.android.settings.bluetoothSettings");
-            intent.setComponent(cn);
-            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            startActivity( intent);
+			Intent intentBluetooth = new Intent();
+		    intentBluetooth.setAction(android.provider.Settings.ACTION_BLUETOOTH_SETTINGS);
+		    startActivity(intentBluetooth);
 
 			
 		}
@@ -89,7 +76,8 @@ public class PairedDevices extends Activity {
 	private final BroadcastReceiver mReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
-            String action = intent.getAction();
+            Log.d(TAG,"reciever registered");
+        	String action = intent.getAction();
 
             // When discovery finds a device
             if (BluetoothDevice.ACTION_FOUND.equals(action)) {
@@ -144,36 +132,44 @@ public class PairedDevices extends Activity {
 		   
 	}
 	
-	
-	
-	
+		
 	void CheckBluetoothState(){
 		
+			
 		if(mBtAdapter==null){
 			Toast.makeText(getApplicationContext(), "Bluetooth Not supported on this device", Toast.LENGTH_LONG).show();
+			
 		}else{
 			if(mBtAdapter.isEnabled()){
-				if(mBtAdapter.isDiscovering()){
+								
+					Toast.makeText(getApplicationContext(), "Bluetooh is On", Toast.LENGTH_SHORT).show();
+					mBtAdapter.startDiscovery();
 					Toast.makeText(getApplicationContext(), "Bluetooth is in discovering mode", Toast.LENGTH_LONG).show();
-				}else{
-					Toast.makeText(getApplicationContext(), "Bluetooh is On", Toast.LENGTH_LONG).show();
-					dispalyPairedDevices();
-				}
-				
+                    dispalyPairedDevices();
+				       
+					   IntentFilter newDeviceFound = new IntentFilter(BluetoothDevice.ACTION_FOUND);
+				       this.registerReceiver(mReceiver, newDeviceFound);
+		            
 			}else{
 			 Intent bluetoothOn = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
 			 startActivityForResult(bluetoothOn,REQUEST_ENABLE_BT);
 		}
-		
-		
+				
 	}
+		
+		
 	}
 
 	@Override
 	 protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 	  // TODO Auto-generated method stub
+		
+		if(resultCode==RESULT_OK){
 	  if(requestCode == REQUEST_ENABLE_BT){
 	   CheckBluetoothState();
+	  }
+	  }else if(resultCode==RESULT_CANCELED){
+		  startActivity(new Intent(PairedDevices.this,HomeScreen.class));
 	  }
   }   
 	
@@ -186,4 +182,12 @@ public class PairedDevices extends Activity {
 		return true;
 	}
 
+	
+	@Override
+    protected void onStop() {
+               
+        super.onStop();
+        
+        unregisterReceiver(mReceiver);
+    }
 }

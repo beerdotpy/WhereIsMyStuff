@@ -101,6 +101,8 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 					
 					
 					navigate.setEnabled(false);
+					Toast.makeText(getApplicationContext(), "Navigation not available as last location and " +
+							"current location same.Please try after some time",Toast.LENGTH_LONG).show();
 				}else{
 					navigate.setEnabled(true);
 				}
