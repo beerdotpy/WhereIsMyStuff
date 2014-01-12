@@ -61,6 +61,7 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 	String lastUserLatitude;
 	String lastUserLongitude;
 	boolean locationChanged=false;
+		
 	
 	// Milliseconds per second
     private static final int MILLISECONDS_PER_SECOND = 1000;
@@ -86,8 +87,12 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
         mActivityIndicator=(ProgressBar) findViewById(R.id.address_progress);
         navigate=(Button) findViewById(R.id.navigate);
         
+        prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
+    	editPrefs=prefs.edit();
+        
         if(checkNetworkConn()){
         	Log.d("Connection","Connected");
+        	
         	
         }else{
         	Toast.makeText(getApplicationContext(), "Please connect to internet and try again", Toast.LENGTH_LONG).show();
@@ -105,7 +110,7 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
         // Set the fastest update interval to 1 second
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
         
-        prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
+        
         
    	 lastUserLatitude=prefs.getString("Latitude",null);
    	 lastUserLongitude=prefs.getString("Longitude",null);
@@ -243,7 +248,11 @@ GooglePlayServicesClient.OnConnectionFailedListener,LocationListener, com.google
 		
    currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
    currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
-   
+  
+	editPrefs.putString("CurrentLatitude", currentUserLatitude);
+	editPrefs.putString("CurrentLongitude",currentUserLongitude);
+	editPrefs.commit();
+      
      if(lastUserLatitude==null && lastUserLongitude==null){
     	 lastUserLatitude=currentUserLatitude;
     	 lastUserLongitude=currentUserLongitude;

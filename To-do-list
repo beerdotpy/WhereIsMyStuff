@@ -1,9 +1,8 @@
 when bluetooth paired cal the locationa and save it
 then when location changed keep tracking when <1m save the location
 if bluetooth paired and conn. then make sure net is always on
-if net disconects then tell user to switch it on
+
 display dialog box on alarm.
 
 
 
-bluetooth enable wifi/internet enable
