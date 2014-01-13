@@ -1,5 +1,6 @@
 package com.sarthakmeh.WhereIsMyStuff;
 
+
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -183,12 +184,11 @@ public class PairedDevices extends Activity {
 		return true;
 	}
 
+//	
+//	@Override
+//    public void onBackPressed() {
+//       Log.d("CDA", "onBackPressed Called");
+//       //unregisterReceiver(mReceiver);
+//    }
 	
-	@Override
-    protected void onStop() {
-               
-        super.onStop();
-        
-        unregisterReceiver(mReceiver);
-    }
 }
