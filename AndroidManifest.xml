@@ -49,6 +49,7 @@
         <activity android:name="com.sarthakmeh.WhereIsMyStuff.TrackLocation" />
         <activity android:name="com.sarthakmeh.WhereIsMyStuff.DisplayLocation" />
         <activity android:name="com.sarthakmeh.WhereIsMyStuff.HomeScreen" />
+        <activity android:name="com.sarthakmeh.WhereIsMyStuff.Temp" />
         <service android:name="com.sarthakmeh.WhereIsMyStuff.StartupService"></service> 
         
         <meta-data

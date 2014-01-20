@@ -146,8 +146,8 @@ public class DisplayLocation extends Activity  {
 					 
 					
 					Intent intent = new Intent(android.content.Intent.ACTION_VIEW, 
-			        	    Uri.parse("http://maps.google.com/maps?saddr="+lat1+
-			        	    		", "+long1+"&daddr="+lat2+", "+long2));
+			        	    Uri.parse("http://maps.google.com/maps?saddr="+lat2+
+			        	    		", "+long2+"&daddr="+lat1+", "+long1));
 			        	startActivity(intent);
 					
 				}
@@ -203,10 +203,12 @@ public class DisplayLocation extends Activity  {
 	  Geocoder geocoder =
                new Geocoder(mContext, Locale.getDefault());
 		
+	  if(str[0]!=null && str[1]!=null && str[2]!=null && str[3]!=null){
+		  
 		try {
-			currentAddress = geocoder.getFromLocation(Double.parseDouble(str[0]),
+			lastAddress = geocoder.getFromLocation(Double.parseDouble(str[0]),
 			        Double.parseDouble(str[1]), 1);
-			lastAddress = geocoder.getFromLocation(Double.parseDouble(str[2]),
+			currentAddress = geocoder.getFromLocation(Double.parseDouble(str[2]),
 			        Double.parseDouble(str[3]), 1);
 		} catch (NumberFormatException e) {
 			// TODO Auto-generated catch block
@@ -214,8 +216,11 @@ public class DisplayLocation extends Activity  {
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}catch(NullPointerException e){
+			
+			e.printStackTrace();
 		}
-		
+	 		
 		if (currentAddress != null && lastAddress!=null && lastAddress.size()>0 && currentAddress.size() > 0) {
            // Get the first address
            Address currentAdd = currentAddress.get(0);
@@ -244,21 +249,29 @@ public class DisplayLocation extends Activity  {
                    // The country of the address
                    lastAdd.getCountryName());
            
-           Log.d(TAG,currentAddressText+" "+lastAddressText);
-		
-           
+           Log.d(TAG,currentAddressText+" "+lastAddressText); 
 		
 	}
+	  }else{
+		  Log.d(TAG,"Null Pointer");
+	  }
 		return true;
    }
 	
 	@Override
 	protected void onPostExecute(Boolean b) {
        // Set activity indicator visibility to "gone"
-       mActivityIndicator.setVisibility(View.GONE);
-       userCurrentLocation.setText(currentAddressText);
-       userLastLocation.setText(lastAddressText);   
-       
+		
+		if(currentAddressText==null && lastAddressText==null){
+          
+			Toast.makeText(getApplicationContext(), "Location not saved .Some problem occured.",Toast.LENGTH_LONG).show();
+			startActivity(new Intent(DisplayLocation.this,HomeScreen.class));
+            finish();		
+		}else{
+			
+		       userCurrentLocation.setText(currentAddressText);
+		       userLastLocation.setText(lastAddressText);
+		       mActivityIndicator.setVisibility(View.GONE);		}
    }
 	 
 	 }

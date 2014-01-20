@@ -56,23 +56,31 @@ public class TrackLocation extends Activity implements LocationListener{
         Latitude = getIntent().getExtras().getString("Lat");
         Longitude = getIntent().getExtras().getString("Long");
         
+        
         mLocationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
         Criteria criteria = new Criteria();
         criteria.setBearingAccuracy(Criteria.ACCURACY_FINE);
         provider = mLocationManager.getBestProvider(criteria, false);
+        
+        mLocationManager.requestLocationUpdates(provider, 400, 1, this);
         Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
         mCurrentLocation = mLocationManager.getLastKnownLocation(provider);
         
+        if(mCurrentLocation != null){
            currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
 		   currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
-		   
+		    
 		   editPrefs.putString(Latitude, currentUserLatitude);
 		   editPrefs.putString(Longitude, currentUserLongitude);
 		   editPrefs.commit();
 		   Toast.makeText(getApplicationContext(), "Location Saved", Toast.LENGTH_SHORT).show();
 		   
-             
+        }else{
+        	Log.d(TAG,"Location null");
+        	Toast.makeText(getApplicationContext(), "Not able to save location.Please reconnect the bluetooth device", Toast.LENGTH_LONG).show();
+        	
+        }
         
 	}
 	
@@ -107,7 +115,7 @@ public class TrackLocation extends Activity implements LocationListener{
 	 @Override
 	 protected void onStart() {
 	        super.onStart();
-	        mLocationManager.requestLocationUpdates(provider, 400, 1, this);
+	        
 	        finish();
 	        Log.d(TAG,"LocationClient connected");
 	    }
@@ -116,6 +124,7 @@ public class TrackLocation extends Activity implements LocationListener{
 	public void onLocationChanged(Location location) {
 		// TODO Auto-generated method stub
 		String msg="Latitude "+location.getLatitude()+" Longitude"+location.getLongitude();
+		Log.d(TAG,msg);
 		Toast.makeText(getApplicationContext(),msg ,Toast.LENGTH_LONG).show();
 		
 	}
