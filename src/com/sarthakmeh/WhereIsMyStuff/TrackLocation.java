@@ -21,6 +21,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -43,7 +44,10 @@ public class TrackLocation extends Activity implements LocationListener{
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-       
+        
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+        
       if(checkNetworkConn()){
     	Log.d("Connection","Connected");    	
     }else{
