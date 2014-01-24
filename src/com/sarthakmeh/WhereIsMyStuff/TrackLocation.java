@@ -37,6 +37,7 @@ public class TrackLocation extends Activity implements LocationListener{
 	Editor editPrefs;
 	String Latitude,Longitude;
 	String provider;
+	Boolean gpsEnabled,networkEnabled;
 	
 	
 	@Override
@@ -53,35 +54,67 @@ public class TrackLocation extends Activity implements LocationListener{
         prefs=getSharedPreferences("UPDATE_LOCAION",Context.MODE_PRIVATE);
     	editPrefs=prefs.edit(); 
         
+    	editPrefs.putBoolean("locationSaved",false);
+    	editPrefs.commit();
         Latitude = getIntent().getExtras().getString("Lat");
         Longitude = getIntent().getExtras().getString("Long");
         
-        
         mLocationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
-        Criteria criteria = new Criteria();
-        criteria.setBearingAccuracy(Criteria.ACCURACY_FINE);
-        provider = mLocationManager.getBestProvider(criteria, false);
+        gpsEnabled=mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
+        networkEnabled=mLocationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+                
+        if(gpsEnabled){
         
+        	provider=LocationManager.GPS_PROVIDER;
+        	getLocation(provider);
+        
+        }else if(networkEnabled){
+        	
+        	provider=LocationManager.NETWORK_PROVIDER;
+        	getLocation(provider);
+        	
+        }     
+        
+	}
+	
+	void getLocation(String provider){
+		
+		
+		mCurrentLocation = mLocationManager.getLastKnownLocation(provider);
+		Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
         mLocationManager.requestLocationUpdates(provider, 400, 1, this);
-        Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
-        mCurrentLocation = mLocationManager.getLastKnownLocation(provider);
         
         if(mCurrentLocation != null){
            currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
-		   currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
-		    
-		   editPrefs.putString(Latitude, currentUserLatitude);
-		   editPrefs.putString(Longitude, currentUserLongitude);
+ 		   currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
+ 		    
+ 		   saveLocation(currentUserLatitude,currentUserLongitude);
+ 		   
+         }else{
+        	 
+        	 while(mCurrentLocation==null){
+        		 mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        		 
+        		 if(mCurrentLocation != null){
+        	     currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
+        	 	 currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
+        	 	
+        	 	saveLocation(currentUserLatitude,currentUserLongitude);
+        		 } 
+        	 }
+         }
+		
+	}
+	
+	void saveLocation(String latitude,String longitude){
+		
+		   editPrefs.putString(Latitude, latitude);
+		   editPrefs.putString(Longitude, longitude);
+		   editPrefs.putBoolean("locationSaved", true);
 		   editPrefs.commit();
 		   Toast.makeText(getApplicationContext(), "Location Saved", Toast.LENGTH_SHORT).show();
-		   
-        }else{
-        	Log.d(TAG,"Location null");
-        	Toast.makeText(getApplicationContext(), "Not able to save location.Please reconnect the bluetooth device", Toast.LENGTH_LONG).show();
-        	
-        }
-        
+
 	}
 	
 	private boolean isNetworkAvailable() {
@@ -116,13 +149,21 @@ public class TrackLocation extends Activity implements LocationListener{
 	 protected void onStart() {
 	        super.onStart();
 	        
-	        finish();
+	        
 	        Log.d(TAG,"LocationClient connected");
 	    }
 	
 	@Override
 	public void onLocationChanged(Location location) {
-		// TODO Auto-generated method stub
+		
+		boolean saveLoc=prefs.getBoolean("locationSaved",false);
+		
+		if(!saveLoc){
+			currentUserLatitude=Double.toString(location.getLatitude());
+	 		currentUserLongitude=Double.toString(location.getLongitude());
+	 		    
+	 		saveLocation(currentUserLatitude,currentUserLongitude);
+		}
 		String msg="Latitude "+location.getLatitude()+" Longitude"+location.getLongitude();
 		Log.d(TAG,msg);
 		Toast.makeText(getApplicationContext(),msg ,Toast.LENGTH_LONG).show();
@@ -133,17 +174,20 @@ public class TrackLocation extends Activity implements LocationListener{
 	public void onProviderDisabled(String provider) {
 		// TODO Auto-generated method stub
 		
+		Log.d(TAG,"providerDisabled");
 	}
 
 	@Override
 	public void onProviderEnabled(String provider) {
 		// TODO Auto-generated method stub
+		Log.d(TAG,"providerEnabled");
 		
 	}
 
 	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras) {
 		// TODO Auto-generated method stub
+		Log.d(TAG,"providerchanged");
 		
 	}
 }
