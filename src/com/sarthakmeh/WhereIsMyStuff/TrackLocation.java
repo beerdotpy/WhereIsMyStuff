@@ -86,10 +86,12 @@ public class TrackLocation extends Activity implements LocationListener{
 		
 		
 		mCurrentLocation = mLocationManager.getLastKnownLocation(provider);
-		Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
+		
         mLocationManager.requestLocationUpdates(provider, 400, 1, this);
         
         if(mCurrentLocation != null){
+        	
+        Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
            currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
  		   currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
  		    
@@ -98,8 +100,8 @@ public class TrackLocation extends Activity implements LocationListener{
          }else{
         	 
         	 while(mCurrentLocation==null){
-        		 mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        		 
+        		 mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+        		 Toast.makeText(getApplicationContext(), LocationManager.PASSIVE_PROVIDER, Toast.LENGTH_SHORT).show();
         		 if(mCurrentLocation != null){
         	     currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
         	 	 currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
@@ -153,7 +155,7 @@ public class TrackLocation extends Activity implements LocationListener{
 	 protected void onStart() {
 	        super.onStart();
 	        
-	        
+	        finish();
 	        Log.d(TAG,"LocationClient connected");
 	    }
 	
