@@ -25,7 +25,7 @@ public class SplashScreen extends Activity {
         public void onTick(long millisUntilFinished)
         {
         	
-        	Log.d("Timer","time for 10sec");
+        	Log.d("Timer","time for 3sec");
         	       	            
         	        }
 

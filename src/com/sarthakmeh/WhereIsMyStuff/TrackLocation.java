@@ -22,6 +22,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.util.Log;
 import android.widget.Toast;
@@ -36,9 +37,11 @@ public class TrackLocation extends Activity implements LocationListener{
 	String TAG="WhereIsMyStuff";
 	SharedPreferences prefs;
 	Editor editPrefs;
-	String Latitude,Longitude;
+	String Latitude,Longitude,timeInterval,device;
 	String provider;
 	Boolean gpsEnabled,networkEnabled;
+	SharedPreferences sp;
+	int minTime,millisec=1000;
 	
 	
 	@Override
@@ -48,6 +51,22 @@ public class TrackLocation extends Activity implements LocationListener{
         StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
         StrictMode.setThreadPolicy(policy);
         
+		sp=PreferenceManager.getDefaultSharedPreferences(this);
+		String timeInterval=sp.getString("location_update","1");
+		int time=Integer.parseInt(timeInterval);
+		
+		if(time==1){
+			minTime=120*millisec;
+		}else if(time==2){
+			minTime=300*millisec;
+		}else if(time == 3){
+			minTime=600*millisec;
+		}else{
+			minTime=900*millisec;
+		}
+		
+		
+		
       if(checkNetworkConn()){
     	Log.d("Connection","Connected");    	
     }else{
@@ -62,6 +81,7 @@ public class TrackLocation extends Activity implements LocationListener{
     	editPrefs.commit();
         Latitude = getIntent().getExtras().getString("Lat");
         Longitude = getIntent().getExtras().getString("Long");
+        device = getIntent().getExtras().getString("Device");
         
         mLocationManager=(LocationManager) getSystemService(Context.LOCATION_SERVICE);
         
@@ -71,27 +91,35 @@ public class TrackLocation extends Activity implements LocationListener{
         if(gpsEnabled){
         
         	provider=LocationManager.GPS_PROVIDER;
-        	getLocation(provider);
+        	getLocation(provider,minTime);
         
         }else if(networkEnabled){
         	
         	provider=LocationManager.NETWORK_PROVIDER;
-        	getLocation(provider);
+        	getLocation(provider,minTime);
         	
         }     
         
 	}
 	
-	void getLocation(String provider){
+	void getLocation(String provider,int minTime){
 		
 		
 		mCurrentLocation = mLocationManager.getLastKnownLocation(provider);
 		
-        mLocationManager.requestLocationUpdates(provider, 400, 1, this);
-        
+		if("Connected".compareToIgnoreCase(device)==0){
+			
+		    
+			mLocationManager.requestLocationUpdates(provider, minTime, 1, this);
+		
+		}else if("DisConnected".compareToIgnoreCase(device)==0){
+			
+			mLocationManager.removeUpdates(this);
+			
+		}
+		        
         if(mCurrentLocation != null){
         	
-        Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
            currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
  		   currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
  		    
@@ -101,7 +129,7 @@ public class TrackLocation extends Activity implements LocationListener{
         	 
         	 while(mCurrentLocation==null){
         		 mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-        		 Toast.makeText(getApplicationContext(), LocationManager.PASSIVE_PROVIDER, Toast.LENGTH_SHORT).show();
+        		 
         		 if(mCurrentLocation != null){
         	     currentUserLatitude=Double.toString(mCurrentLocation.getLatitude());
         	 	 currentUserLongitude=Double.toString(mCurrentLocation.getLongitude());
@@ -170,9 +198,9 @@ public class TrackLocation extends Activity implements LocationListener{
 	 		    
 	 		saveLocation(currentUserLatitude,currentUserLongitude);
 		}
-		String msg="Latitude "+location.getLatitude()+" Longitude"+location.getLongitude();
+		String msg="Latitude "+location.getLatitude()+" \nLongitude "+location.getLongitude();
 		Log.d(TAG,msg);
-		Toast.makeText(getApplicationContext(),msg ,Toast.LENGTH_LONG).show();
+		Toast.makeText(getApplicationContext(),msg ,Toast.LENGTH_SHORT).show();
 		
 	}
 

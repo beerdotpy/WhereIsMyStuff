@@ -144,7 +144,7 @@ public class PairedDevices extends Activity {
 		}else{
 			if(mBtAdapter.isEnabled()){
 								
-					Toast.makeText(getApplicationContext(), "Bluetooh is On", Toast.LENGTH_SHORT).show();
+					Toast.makeText(getApplicationContext(), "Bluetooth is On", Toast.LENGTH_SHORT).show();
 					mBtAdapter.startDiscovery();
 					Toast.makeText(getApplicationContext(), "Bluetooth is in discovering mode", Toast.LENGTH_LONG).show();
                     dispalyPairedDevices();
@@ -172,6 +172,7 @@ public class PairedDevices extends Activity {
 	  }
 	  }else if(resultCode==RESULT_CANCELED){
 		  startActivity(new Intent(PairedDevices.this,HomeScreen.class));
+		  finish();
 	  }
   }   
 	

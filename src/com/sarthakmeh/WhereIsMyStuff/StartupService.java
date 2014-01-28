@@ -95,28 +95,26 @@ public class StartupService extends Service {
 		        // Get the BluetoothDevice object from the Intent
 		        BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
 		        Toast.makeText(context, device.getName()+" Connected", Toast.LENGTH_LONG).show();
-		        vib.vibrate(500);
+		        vib.vibrate(1000);
 		        Intent gps=new Intent(StartupService.this,TrackLocation.class);
 			    gps.putExtra("Lat","PairedLatitude");
 			    gps.putExtra("Long","PairedLongitude");
+			    gps.putExtra("Device","Connected");
 			    gps.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		        context.startActivity(gps);
 		        Log.d(TAG,"Device Connected");
 		        
 		    }if(BluetoothDevice.ACTION_ACL_DISCONNECTED.equalsIgnoreCase(action)) {
 		
-		    	vib.vibrate(500);
+		    	vib.vibrate(1500);
 		    	Toast.makeText(context, "Device Disconnected", Toast.LENGTH_LONG).show();
 		    	Intent gps=new Intent(StartupService.this,TrackLocation.class);
 			    gps.putExtra("Lat","UnPairedLatitude");
 			    gps.putExtra("Long","UnPairedLongitude");
+			    gps.putExtra("Device","DisConnected");
 			    gps.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		        context.startActivity(gps);
 		        
-//		        Intent showLocation=new Intent(StartupService.this,DisplayLocation.class);
-//		        showLocation.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		        context.startActivity(showLocation);
-//		    	Log.d(TAG,"Device Disconnected");
 		    }
 	}
 	};
