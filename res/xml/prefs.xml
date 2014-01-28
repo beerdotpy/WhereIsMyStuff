@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android" >
+    
+<Preference 
+       android:title="Settings"
+       android:key="instructions"/>
+       
+   <PreferenceCategory 
+        android:title="Location Update Interval"
+        android:key="location_update">
+        
+  <ListPreference     
+      android:title="Location Update Interval"
+      android:defaultValue="1"
+      android:summary="Set time interval between Location updates" 
+      android:key="location_update" 
+      android:entryValues="@array/timeintervalValues"
+      android:entries="@array/timeinterval"/>
+    
+    </PreferenceCategory>
+</PreferenceScreen>

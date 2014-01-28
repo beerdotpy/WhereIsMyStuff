@@ -51,6 +51,11 @@
         <activity android:name="com.sarthakmeh.WhereIsMyStuff.HomeScreen" />
         <activity android:name="com.sarthakmeh.WhereIsMyStuff.Temp" />
         <service android:name="com.sarthakmeh.WhereIsMyStuff.StartupService"></service> 
+        <activity
+            android:name="com.sarthakmeh.WhereIsMyStuff.Settings"
+            android:theme="@style/AppTheme">
+            
+        </activity>
         
         <meta-data
     android:name="com.google.android.maps.v2.API_KEY"

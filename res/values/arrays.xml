@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:android="http://schemas.android.com/apk/res/android">
+    
+<string-array name="timeinterval">
+        <item name="2min">2 minutes</item>
+        <item name="5min">5 minutes</item>     
+        <item name="10min">10 minutes</item>
+        <item name="15min">15 minutes</item>
+        
+    </string-array>
+    
+    <string-array name="timeintervalValues">
+        <item name="2min">1</item>
+        <item name="5min">2</item>
+        <item name="10min">3</item>
+        <item name="15min">4</item>
+        
+    </string-array>
+        
+</resources>
